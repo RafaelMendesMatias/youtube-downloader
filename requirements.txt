@@ -1,5 +1,5 @@
 # pip install -r requirements.txt
 # requirements.txt
 pillow
-pytube3
+pytube
 requests
