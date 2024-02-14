@@ -1,9 +1,16 @@
-#  Youtube Downloader
-O YouTube Downloader é um projeto de código aberto que permite baixar vídeos e áudios do YouTube de forma simples. O projeto é desenvolvido em Python e oferece uma interface intuitiva para que os usuários possam fazer o download de conteúdo do YouTube com facilidade.
+# BOT WHATSAPP
 
-# Principais Recursos
-Baixar Vídeos: O projeto permite que os usuários baixem vídeos do YouTube em formato MP4.
+## Instalação
 
-Extrair Áudio: O YouTube Downloader também oferece a funcionalidade de extrair apenas o áudio dos vídeos em MP3.
+1 - Crie um Ambiente Virtual:
+python -m venv youtube_downloader
 
-Simplicidade e Eficiência: O projeto é desenvolvido com foco na simplicidade e eficiência. Ele utiliza bibliotecas Python populares, como pytube, para manipulação e processamento de vídeos e áudios, garantindo um desempenho rápido e confiável.
+2 - Ative o ambiente virtual:
+
+WINDOWS: .\youtube_downloader\Scripts\activate
+MAC/LINUX: source youtube_downloader/bin/activate
+
+3 - Instale as Dependências:
+pip install -r requirements.txt
+
+Este conjunto de comandos cria um ambiente virtual, ativa-o e instala as dependências.
