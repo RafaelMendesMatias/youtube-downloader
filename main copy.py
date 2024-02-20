@@ -4,6 +4,8 @@ from pytube import YouTube
 from PIL import ImageTk, Image
 from io import BytesIO
 import requests, threading, re, textwrap, webbrowser
+import os
+
 
 lista_links = []
 lista_links_concluidos = []
@@ -228,7 +230,11 @@ frame_configuracoes.pack(pady=10)
 label_caminho_salvar = tk.Label(frame_configuracoes, text="Caminho de Salvamento:")
 label_caminho_salvar.pack()
 
+
+caminho_documentos = os.path.join(os.path.expanduser('~'), 'Music')
+
 entry_caminho_salvar = tk.Entry(frame_configuracoes, width=50)
+entry_caminho_salvar.insert(tk.END, caminho_documentos)  # Inserir "teste" como texto padrão
 entry_caminho_salvar.pack()
 
 botao_selecionar_pasta = tk.Button(frame_configuracoes, text="Selecionar Pasta", bg='#e23e0a', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=selecionar_pasta_destino, padx=10, pady=5)
