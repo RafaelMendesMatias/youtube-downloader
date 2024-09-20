@@ -1,5 +1,6 @@
 # pip install -r requirements.txt
 # requirements.txt
 pillow
-pytube
-requests 
+pytubefix
+requests
+pyinstaller

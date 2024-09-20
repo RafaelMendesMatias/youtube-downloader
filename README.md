@@ -13,4 +13,4 @@ MAC/LINUX: source youtube_downloader/bin/activate
 3 - Instale as Dependências:
 pip install -r requirements.txt
 
-Este conjunto de comandos cria um ambiente virtual, ativa-o e instala as dependências.
+Este conjunto de comandos cria um ambiente virtual, ativa-o e instala as dependências. 
