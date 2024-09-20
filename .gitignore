@@ -1,5 +1,6 @@
-youtube_down/
+youtube_downloader/
 build/
 dist/
 main.spec
-main copy.py 
+main copy.py
+downloads/

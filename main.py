@@ -1,23 +1,32 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-from pytube import YouTube
+from pytubefix import YouTube
 from PIL import ImageTk, Image
 from io import BytesIO
 import requests, threading, re, textwrap, webbrowser
+import os
 
 lista_links = []
 lista_links_concluidos = []
-pasta_destino = ""
+pasta_destino = "downloads/"
 
 def adicionar_link():
     link = entry_link.get()
     if link == "":
-        print("Vazio")
+        mostrar_alerta("Insira um link para download.")
     else:
-        video = YouTube(link)
-        thumbnail = obter_thumbnail(link)
-        lista_links.insert(0, {"titulo": video.title, "url": link, "thumbnail": thumbnail})
-        atualizar_lista_links()
+        try:
+            video = YouTube(link)
+            thumbnail = obter_thumbnail(link)
+            lista_links.insert(0, {"titulo": video.title, "url": link, "thumbnail": thumbnail})
+            atualizar_lista_links()
+        except Exception:
+            mostrar_alerta("Insira um link válido.")
+            
+
+def mostrar_alerta(msg):
+    messagebox.showinfo("Alerta", msg)
+
 
 def obter_thumbnail(link):
     video = YouTube(link)
@@ -43,41 +52,44 @@ def iniciar_download():
     thread_download.start()
 
 def download_links():
-    # Disable buttons during download
+    # Desabilita os botões durante o download para evitar conflitos
     botao_adicionar.config(state="disabled")
     botao_iniciar_download.config(state="disabled")
     botao_limpar_listas.config(state="disabled")
 
     links_pendentes = list(lista_links)  # Faz uma cópia da lista de links pendentes para evitar problemas durante o loop
     
-    for link in links_pendentes:
-        video = YouTube(link['url'])
-        titulo_video = video.title
+    if(links_pendentes != []):
+        for link in links_pendentes:
+            video = YouTube(link['url'])
+            titulo_video = video.title
 
-        if entry_nome_arquivo.get():
-            nome_arquivo = f"{entry_nome_arquivo.get()}_{titulo_video}" 
-        else:
-            nome_arquivo = f"{titulo_video}" 
-        
-        nome_arquivo = re.sub(r'[<>:"/\\|?*]', '', nome_arquivo)
+            if entry_nome_arquivo.get():
+                nome_arquivo = f"{entry_nome_arquivo.get()}_{titulo_video}" 
+            else:
+                nome_arquivo = f"{titulo_video}" 
+            
+            nome_arquivo = re.sub(r'[<>:"/\\|?*]', '', nome_arquivo)
 
-        if escolha_saida.get() == 'Áudio':
-            video.streams.filter(only_audio=True).first().download(output_path=pasta_destino, filename=nome_arquivo + ".mp3")
+            if escolha_saida.get() == 'Áudio':
+                video.streams.filter(only_audio=True).first().download(output_path=pasta_destino, filename=nome_arquivo + ".mp3")
 
-        elif escolha_saida.get() == 'Vídeo':
-            # Escolher a stream de vídeo com resolução 720p, se disponível
-            video_stream = video.streams.filter(res="720p", file_extension='mp4').first()
-            if not video_stream:
-                # Se 720p não estiver disponível, escolher a melhor qualidade disponível
-                video_stream = video.streams.filter(progressive=True, file_extension='mp4').first()
+            elif escolha_saida.get() == 'Vídeo':
+                # Escolher a stream de vídeo com resolução 720p, se disponível
+                video_stream = video.streams.filter(res="720p", file_extension='mp4').first()
+                if not video_stream:
+                    # Se 720p não estiver disponível, escolher a melhor qualidade disponível
+                    video_stream = video.streams.filter(progressive=True, file_extension='mp4').first()
 
-            video_stream.download(output_path=pasta_destino, filename=nome_arquivo + ".mp4")
+                video_stream.download(output_path=pasta_destino, filename=nome_arquivo + ".mp4")
 
-        lista_links_concluidos.append(link)
-        lista_links.remove(link)
-        janela.after(0, atualizar_lista_links)
-
-    # Enable buttons after download
+            lista_links_concluidos.append(link)
+            lista_links.remove(link)
+            janela.after(0, atualizar_lista_links)
+    else: 
+        mostrar_alerta("Adicione uma fila para fazer Download.")
+    
+    # Ativar os botões novamente após o download
     botao_adicionar.config(state="normal")
     botao_iniciar_download.config(state="normal")
     botao_limpar_listas.config(state="normal")
@@ -191,13 +203,13 @@ style.configure("RoundedButton.TButton", borderwidth=0, relief="flat", foregroun
 def limpar_entry_link():
     entry_link.delete(0, tk.END)  # Remove o texto atual
     
-botao_adicionar = tk.Button(frame_botoes, cursor="hand2", text="ADICIONAR", bg='#e23e0a', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=lambda: [adicionar_link(), limpar_entry_link()], padx=10, pady=5)
+botao_adicionar = tk.Button(frame_botoes, cursor="hand2", text="ADICIONAR", bg='#e23e0a', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=lambda: [adicionar_link(), limpar_entry_link()], padx=10, pady=5, activebackground='#ff6f00', activeforeground='#fff')
 botao_adicionar.pack(side=tk.LEFT, padx=10)
 
-botao_iniciar_download = tk.Button(frame_botoes, cursor="hand2", text="INICIAR DOWNLOAD", bg='green', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=iniciar_download, padx=10, pady=5)
+botao_iniciar_download = tk.Button(frame_botoes, cursor="hand2", text="INICIAR DOWNLOAD", bg='green', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=iniciar_download, padx=10, pady=5, activebackground='#1b5e20', activeforeground='#fff')
 botao_iniciar_download.pack(side=tk.LEFT, padx=10)
 
-botao_limpar_listas = tk.Button(frame_botoes, cursor="hand2", text="LIMPAR LISTAS", bg='#222', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=limpar_listas, padx=10, pady=5)
+botao_limpar_listas = tk.Button(frame_botoes, cursor="hand2", text="LIMPAR LISTAS", bg='#222', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=limpar_listas, padx=10, pady=5, activebackground='#424242', activeforeground='#fff')
 botao_limpar_listas.pack(side=tk.LEFT, padx=10)
 
 lista_pendentes_frame = ttk.Labelframe(aba_pagina_inicial, text="Download Pendente", width=300)
@@ -213,7 +225,11 @@ frame_configuracoes.pack(pady=10)
 label_caminho_salvar = tk.Label(frame_configuracoes, text="Caminho de Salvamento:")
 label_caminho_salvar.pack()
 
+
+caminho_documentos = os.path.join(os.path.expanduser('~'), 'Music')
+
 entry_caminho_salvar = tk.Entry(frame_configuracoes, width=50)
+entry_caminho_salvar.insert(tk.END, caminho_documentos)  # Inserir "teste" como texto padrão
 entry_caminho_salvar.pack()
 
 botao_selecionar_pasta = tk.Button(frame_configuracoes, text="Selecionar Pasta", bg='#e23e0a', fg="#fff", borderwidth=0, font=("Arial", 10, 'bold'), command=selecionar_pasta_destino, padx=10, pady=5)
