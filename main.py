@@ -23,10 +23,8 @@ def adicionar_link():
         except Exception:
             mostrar_alerta("Insira um link válido.")
             
-
 def mostrar_alerta(msg):
     messagebox.showinfo("Alerta", msg)
-
 
 def obter_thumbnail(link):
     video = YouTube(link)
@@ -72,7 +70,7 @@ def download_links():
             nome_arquivo = re.sub(r'[<>:"/\\|?*]', '', nome_arquivo)
 
             if escolha_saida.get() == 'Áudio':
-                video.streams.filter(only_audio=True).first().download(output_path=pasta_destino, filename=nome_arquivo + ".mp3")
+                video.streams.filter(only_audio=True).first().download(output_path=pasta_destino, filename=nome_arquivo + ".wav")
 
             elif escolha_saida.get() == 'Vídeo':
                 # Escolher a stream de vídeo com resolução 720p, se disponível

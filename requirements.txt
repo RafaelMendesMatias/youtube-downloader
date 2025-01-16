@@ -4,3 +4,4 @@ pillow
 pytubefix
 requests
 pyinstaller
+pydub
